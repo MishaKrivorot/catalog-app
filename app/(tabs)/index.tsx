@@ -3,8 +3,7 @@ import {
   FlatList,
   Platform,
   SafeAreaView,
-  ScrollView // Додано для горизонтального списку категорій
-  ,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -27,16 +26,12 @@ export default function HomeScreen() {
   const [sortMode, setSortMode] = useState('rating');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  // Нові стани для категорій та pull-to-refresh
   const [activeCategory, setActiveCategory] = useState('Всі');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Функція для симуляції оновлення даних (Pull-to-refresh)
   const handleRefresh = () => {
     setIsRefreshing(true);
-    // Імітуємо завантаження з сервера (1.5 секунди)
     setTimeout(() => {
-      // Тут зазвичай робиться запит до API, але ми просто скидаємо фільтри і зупиняємо спінер
       setSearchQuery('');
       setActiveCategory('Всі');
       setSortMode('rating');
@@ -44,7 +39,6 @@ export default function HomeScreen() {
     }, 1500);
   };
 
-  // Функція для очищення фільтрів
   const clearFilters = () => {
     setSearchQuery('');
     setActiveCategory('Всі');
@@ -52,7 +46,8 @@ export default function HomeScreen() {
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    let result = PRODUCTS;
+    // ВАЖЛИВИЙ ФІКС: Створюємо копію масиву замість прямого посилання
+    let result = [...PRODUCTS]; 
 
     // 1. Фільтрація за категорією
     if (activeCategory !== 'Всі') {
@@ -89,7 +84,6 @@ export default function HomeScreen() {
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <View style={styles.container}>
         
-        {/* Рядок пошуку */}
         <View style={styles.header}>
           <TextInput
             style={styles.searchInput}
@@ -99,7 +93,6 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Горизонтальний список категорій */}
         <View style={styles.categoriesWrapper}>
           <ScrollView 
             horizontal 
@@ -115,7 +108,7 @@ export default function HomeScreen() {
                 ]}
                 onPress={() => {
                   setActiveCategory(category);
-                  setIsDropdownOpen(false); // Ховаємо меню сортування, якщо воно відкрите
+                  setIsDropdownOpen(false); 
                 }}
               >
                 <Text style={[
@@ -129,7 +122,6 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* Випадаючий список сортування */}
         <View style={styles.sortContainer}>
           <TouchableOpacity 
             style={styles.dropdownHeader} 
@@ -162,7 +154,6 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Сітка товарів */}
         <FlatList
           data={filteredAndSortedProducts}
           keyExtractor={(item) => item.id}
@@ -172,12 +163,8 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
           onScrollBeginDrag={() => setIsDropdownOpen(false)} 
-          
-          // Pull-to-refresh налаштування
           refreshing={isRefreshing}
           onRefresh={handleRefresh}
-          
-          // Компонент, який показується, коли масив порожній
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>😔</Text>
@@ -210,15 +197,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  // Стилі для категорій
-  categoriesWrapper: {
-    height: 40,
-    marginBottom: 10,
-  },
-  categoriesContainer: {
-    paddingRight: 20, // Відступ в кінці скролу
-    gap: 8, // Відстань між чіпами
-  },
+  categoriesWrapper: { height: 40, marginBottom: 10 },
+  categoriesContainer: { paddingRight: 20, gap: 8 },
   categoryChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -229,20 +209,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  categoryChipActive: {
-    backgroundColor: '#007BFF',
-    borderColor: '#007BFF',
-  },
-  categoryText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  categoryTextActive: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  // Стилі для сортування
+  categoryChipActive: { backgroundColor: '#007BFF', borderColor: '#007BFF' },
+  categoryText: { fontSize: 14, color: '#666', fontWeight: '500' },
+  categoryTextActive: { color: '#fff', fontWeight: 'bold' },
   sortContainer: { marginBottom: 10 },
   dropdownHeader: {
     flexDirection: 'row',
@@ -274,8 +243,6 @@ const styles = StyleSheet.create({
   dropdownItemText: { fontSize: 15, color: '#333' },
   activeDropdownItemText: { color: '#007BFF', fontWeight: 'bold' },
   listContainer: { paddingBottom: 20, flexGrow: 1 },
-  
-  // Стилі для порожнього стану
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
