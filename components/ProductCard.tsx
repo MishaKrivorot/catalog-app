@@ -1,15 +1,14 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
 
-// Описуємо структуру нашого товару для TypeScript
 interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;
+  // Змінили тип з string на ImageSourcePropType для підтримки локальних файлів
+  image: ImageSourcePropType; 
 }
 
-// Описуємо пропси, які приймає компонент
 interface ProductCardProps {
   product: Product;
 }
@@ -17,7 +16,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: product.image }} style={styles.image} />
+      {/* ЗМІНА ТУТ: Замість source={{ uri: product.image }} тепер просто source={product.image} */}
+      <Image source={product.image} style={styles.image} />
+      
       <Text style={styles.name} numberOfLines={2}>
         {product.name}
       </Text>
@@ -34,8 +35,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     alignItems: 'center',
-    elevation: 3, // Тінь для Android
-    shadowColor: '#000', // Тінь для iOS
+    elevation: 3, 
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -45,6 +46,8 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 8,
     marginBottom: 10,
+    // Додаємо resizeMode, щоб картинки пропорційно вписувалися у квадрат
+    resizeMode: 'contain', 
   },
   name: {
     fontSize: 14,
