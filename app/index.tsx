@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import ProductCard from '../../components/ProductCard';
-import { CATEGORIES, PRODUCTS } from '../../constants/data';
+import ProductCard from '../components/ProductCard';
+import { CATEGORIES, PRODUCTS } from '../constants/data';
 
 const SORT_OPTIONS = [
   { id: 'rating', label: 'За рейтингом' },
