@@ -1,6 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import {
   FlatList,
+  Image,
+
+
+  Modal,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -9,10 +13,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View
 } from 'react-native';
 import ProductCard from '../components/ProductCard';
-import { CATEGORIES, PRODUCTS } from '../constants/data';
+import { CATEGORIES, PRODUCTS, Product } from '../constants/data';
 
 const SORT_OPTIONS = [
   { id: 'rating', label: 'За рейтингом' },
@@ -25,9 +30,10 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState('rating');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
   const [activeCategory, setActiveCategory] = useState('Всі');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -46,25 +52,20 @@ export default function HomeScreen() {
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    // ВАЖЛИВИЙ ФІКС: Створюємо копію масиву замість прямого посилання
     let result = [...PRODUCTS]; 
 
-    // 1. Фільтрація за категорією
     if (activeCategory !== 'Всі') {
       result = result.filter(product => product.category === activeCategory);
     }
 
-    // 2. Фільтрація за пошуком
     if (searchQuery.trim() !== '') {
       result = result.filter(product => 
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // 3. Сортування
     result.sort((a, b) => {
       const getFinalPrice = (p: typeof a) => p.price * (1 - p.discount / 100);
-      
       switch (sortMode) {
         case 'rating': return b.rating - a.rating; 
         case 'price_asc': return getFinalPrice(a) - getFinalPrice(b); 
@@ -157,7 +158,12 @@ export default function HomeScreen() {
         <FlatList
           data={filteredAndSortedProducts}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ProductCard product={item} />}
+          renderItem={({ item }) => (
+            <ProductCard 
+              product={item} 
+              onPress={(product) => setSelectedProduct(product)} 
+            />
+          )}
           numColumns={2}
           style={{ flex: 1 }}
           contentContainerStyle={styles.listContainer}
@@ -176,6 +182,49 @@ export default function HomeScreen() {
             </View>
           }
         />
+
+        {/* --- МОДАЛЬНЕ ВІКНО ДЕТАЛЕЙ ТОВАРУ --- */}
+        <Modal
+          visible={selectedProduct !== null}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setSelectedProduct(null)} // Для кнопки "Назад" на Android
+        >
+          {/* Темний фон, клік по якому закриває модалку */}
+          <TouchableOpacity 
+            style={styles.modalOverlay} 
+            activeOpacity={1} 
+            onPress={() => setSelectedProduct(null)}
+          >
+            {selectedProduct && (
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  <Image source={selectedProduct.image} style={styles.modalImage} />
+                  
+                  <View style={styles.modalInfo}>
+                    <Text style={styles.modalCategory}>{selectedProduct.category}</Text>
+                    <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
+                    <Text style={styles.modalRating}>⭐ {selectedProduct.rating}</Text>
+                    
+                    <Text style={styles.modalDescription}>
+                      Це детальний опис товару. Тут можна додати характеристики або будь-яку іншу інформацію про {selectedProduct.name.toLowerCase()}.
+                    </Text>
+
+                    <View style={styles.modalPriceContainer}>
+                      <Text style={styles.modalPrice}>
+                        {Math.round(selectedProduct.price * (1 - selectedProduct.discount / 100))} ₴
+                      </Text>
+                      {selectedProduct.discount > 0 && (
+                        <Text style={styles.modalOldPrice}>{selectedProduct.price} ₴</Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            )}
+          </TouchableOpacity>
+        </Modal>
+
       </View>
     </SafeAreaView>
   );
@@ -259,4 +308,73 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   clearButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  
+  
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  modalImage: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'contain',
+    backgroundColor: '#f9f9f9',
+    padding: 20,
+  },
+  modalInfo: {
+    padding: 20,
+  },
+  modalCategory: {
+    color: '#007BFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 5,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  modalRating: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 15,
+  },
+  modalDescription: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#555',
+    marginBottom: 20,
+  },
+  modalPriceContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
+  },
+  modalPrice: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#E53935',
+  },
+  modalOldPrice: {
+    fontSize: 16,
+    color: '#999',
+    textDecorationLine: 'line-through',
+  },
 });

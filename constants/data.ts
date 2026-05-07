@@ -7,7 +7,7 @@ export interface Product {
   image: ImageSourcePropType;
   rating: number;   
   discount: number; 
-  category: string; // Додано: Категорія товару
+  category: string;
 }
 
 // Список категорій для меню
@@ -16,7 +16,7 @@ export const CATEGORIES = ['Всі', 'Комп\'ютери', 'Смартфони
 export const PRODUCTS: Product[] = [
   {
     id: '1', name: 'Ноутбук Ігровий 15.6"', price: 35000, rating: 4.8, discount: 10, category: 'Комп\'ютери',
-    image: require('../assets/images/laptop.jpg') // Тут і далі залишай свої шляхи
+    image: require('../assets/images/laptop.jpg')
   },
   {
     id: '2', name: 'Смартфон 12GB/512GB', price: 70000, rating: 4.9, discount: 5, category: 'Смартфони',

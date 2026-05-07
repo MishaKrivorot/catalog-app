@@ -1,17 +1,21 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Product } from '../constants/data';
 
 interface ProductCardProps {
   product: Product;
+  onPress: (product: Product) => void; 
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-
+const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const discountedPrice = Math.round(product.price * (1 - product.discount / 100));
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity 
+      style={styles.card} 
+      onPress={() => onPress(product)}
+      activeOpacity={0.7}
+    >
       {product.discount > 0 && (
         <View style={styles.discountBadge}>
           <Text style={styles.discountText}>-{product.discount}%</Text>
@@ -29,16 +33,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <View style={styles.priceContainer}>
         {product.discount > 0 ? (
           <>
-            {}
             <Text style={styles.oldPrice}>{product.price} ₴</Text>
-            {}
             <Text style={styles.newPrice}>{discountedPrice} ₴</Text>
           </>
         ) : (
           <Text style={styles.newPrice}>{product.price} ₴</Text>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
