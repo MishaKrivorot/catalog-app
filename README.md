@@ -1,50 +1,61 @@
-# Welcome to your Expo app 👋
+# 📱 Каталог товарів (Catalog App)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Сучасний мобільний додаток-каталог для електронної комерції, розроблений з використанням **React Native** та **Expo**. Додаток демонструє плавний інтерфейс, складну логіку фільтрації та сортування, а також нативну взаємодію з користувачем.
 
-## Get started
+## ✨ Головний функціонал
 
-1. Install dependencies
+- **Кросплатформність:** Працює як на iOS, так і на Android.
+- **Розумний пошук:** Миттєвий пошук товарів за назвою.
+- **Фільтрація за категоріями:** Горизонтальний скрол-бар (чіпи) для швидкого перемикання між категоріями (Смарфтони, Комп'ютери, Периферія тощо).
+- **Кастомне сортування:** Власний випадаючий список (Dropdown) для сортування за:
+  - Рейтингом ⭐️
+  - Ціною (від дешевих до дорогих і навпаки) 💵
+  - Розміром знижки 🏷️
+- **Розрахунок знижок:** Динамічне відображення старої перекресленої ціни та нової ціни на основі відсотка знижки.
+- **Pull-to-refresh:** Нативна анімація оновлення списку притягуванням донизу.
+- **Обробка порожніх станів (Empty States):** Красивий екран-заглушка з кнопкою швидкого скидання фільтрів, якщо за запитом нічого не знайдено.
+- **Модальне вікно (Деталі товару):** При кліку на товар плавно спливає детальна інформація про нього із затемненням фону (без необхідності переходу на окремий екран).
 
-   ```bash
-   npm install
-   ```
+## 🛠 Технологічний стек
 
-2. Start the app
+- **Фреймворк:** [React Native](https://reactnative.dev/)
+- **Інструментарій:** [Expo](https://expo.dev/)
+- **Мова:** TypeScript
+- **Навігація:** Expo Router (Stack Navigation)
+- **Стилізація:** StyleSheet (Flexbox)
 
-   ```bash
-   npx expo start
-   ```
+## 📂 Структура проєкту
 
-In the output, you'll find options to open the app in a
+Основні робочі директорії додатку:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+catalog-app/
+├── app/
+│   ├── _layout.tsx      # Головний файл налаштування навігації та провайдерів
+│   └── index.tsx        # Головний екран каталогу (UI, логіка фільтрів, FlatList)
+├── components/
+│   └── ProductCard.tsx  # Перевикористовуваний компонент картки товару
+├── constants/
+│   ├── data.ts          # Mock-дані (масив товарів та категорій)
+│   └── theme.ts         # Налаштування кольорів та теми
+└── assets/
+    └── images/          # Локальні зображення для товарів
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Щоб запустити цей проєкт на своєму комп'ютері, виконай наступні кроки:
 
-## Learn more
+Клонуй репозиторій:
+git clone https://github.com/MishaKrivorot/catalog-app.git
 
-To learn more about developing your project with Expo, look at the following resources:
+cd catalog-app
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Встанови залежності:
+npm install
 
-## Join the community
+Запусти локальний сервер Expo:
+npx expo start
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Відкрий додаток:
+Завантаж додаток Expo Go на свій смартфон (Android або iOS).
+Відскануй QR-код, який з'явиться у твоєму терміналі.
+Або натисни a в терміналі для запуску на Android Емуляторі.
